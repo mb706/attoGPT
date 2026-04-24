@@ -540,9 +540,8 @@ input[type="range"] {
   inset: 0;
   z-index: 20;
   background:
-    radial-gradient(circle at var(--x, 50%) var(--y, 50%), transparent 0 12rem, rgba(30, 21, 12, 0.34) 18rem),
-    rgba(30, 21, 12, 0.22);
-  backdrop-filter: blur(2px);
+    radial-gradient(circle at var(--x, 50%) var(--y, 50%), transparent 0 11rem, rgba(30, 21, 12, 0.28) 17rem),
+    rgba(30, 21, 12, 0.18);
 }
 
 .tour-card {
@@ -593,9 +592,10 @@ input[type="range"] {
 
 .tour-highlight {
   position: relative;
-  z-index: 30;
+  z-index: 40;
   outline: 4px solid rgba(255, 176, 64, 0.92);
   outline-offset: 6px;
+  background-color: rgba(255, 250, 238, 0.92);
   box-shadow:
     0 0 0 10px rgba(255, 246, 220, 0.42),
     0 20px 80px rgba(43, 28, 12, 0.28);
