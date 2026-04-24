@@ -47,7 +47,6 @@ const el = {
   predCount: document.querySelector("#pred-count"),
   tutorialBtn: document.querySelector("#tutorial-btn"),
   explainer: document.querySelector(".explainer"),
-  tourBackdrop: document.querySelector("#tour-backdrop"),
   tourCard: document.querySelector("#tour-card"),
   tourStep: document.querySelector("#tour-step"),
   tourTitle: document.querySelector("#tour-title"),
@@ -90,7 +89,7 @@ const tour = {
         "Each token tile has two tiny heat bars. Orange is attention head 0; teal is attention head 1. A longer bar means that head used that token more strongly.",
     },
     {
-      selector: "#selected-token",
+      selector: '[data-tour="editor"]',
       title: "Edit individual tokens",
       body:
         "The selected token appears here. Type a replacement and choose from suggestions ranked by edit distance and token frequency. This keeps edits inside the model vocabulary.",
@@ -108,7 +107,7 @@ const tour = {
         "Predict here makes the selected token the current focus. The heat bars and next-token list then explain the model's prediction after that token.",
     },
     {
-      selector: "#predictions",
+      selector: '[data-tour="next-token"]',
       title: "Inspect next-token probabilities",
       body:
         "This list shows the model's most likely next tokens and their probabilities. Click any row to append that token after the current focus.",
@@ -196,7 +195,6 @@ function setupTourControls() {
   el.tourPrev.addEventListener("click", () => showTourStep(tour.index - 1));
   el.tourNext.addEventListener("click", () => showTourStep(tour.index + 1));
   el.tourClose.addEventListener("click", endTour);
-  el.tourBackdrop.addEventListener("click", endTour);
   window.addEventListener("keydown", (event) => {
     if (!tour.active) return;
     if (event.key === "Escape") endTour();
@@ -401,7 +399,6 @@ function setStatus(message) {
 
 function startTour() {
   tour.active = true;
-  el.tourBackdrop.hidden = false;
   el.tourCard.hidden = false;
   document.body.classList.add("tour-active");
   if (!state.model) setStatus("tutorial ready - model is still loading in the background...");
@@ -466,7 +463,6 @@ function endTour() {
   clearTourTarget();
   tour.active = false;
   tour.index = 0;
-  el.tourBackdrop.hidden = true;
   el.tourCard.hidden = true;
   document.body.classList.remove("tour-active");
 }

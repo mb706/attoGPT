@@ -112,7 +112,7 @@
       </section>
 
       <aside class="side-panel" aria-label="Controls">
-        <section class="panel card">
+        <section class="panel card" data-tour="editor">
           <h2>Edit Token</h2>
           <p id="selected-token" class="selected-token">token</p>
           <input id="edit-input" type="text" autocomplete="off" spellcheck="false" />
@@ -125,7 +125,7 @@
           </div>
         </section>
 
-        <section class="panel card">
+        <section class="panel card" data-tour="next-token">
           <h2>Next Token</h2>
           <div class="generation-controls">
             <button id="top1-btn" class="primary">Use top 1</button>
@@ -158,8 +158,6 @@
         </section>
       </aside>
     </main>
-
-    <div id="tour-backdrop" class="tour-backdrop" hidden></div>
     <aside id="tour-card" class="tour-card" hidden aria-live="polite">
       <p id="tour-step" class="tour-step">Step 1</p>
       <h2 id="tour-title">Tutorial</h2>
