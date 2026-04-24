@@ -180,3 +180,46 @@ Final attention inspection on prompt `once upon a time there was a little dog wh
 Final decision:
 - Stop at 12k steps. The last sampled eval at step 12k was worse than step 11.5k, and the late improvements were small enough that a longer extension is unlikely to materially improve the demonstration value.
 - Keep top-k 5 rather than dense/top-k 8/16. Dense attention can lower loss, but top-k 5 makes the model far easier to explain and still produces recognizable English.
+
+### 2026-04-24: Attention Head Behavior
+
+Probe method:
+- Inspected the final checkpoint on hand-written TinyStories-style prompts.
+- Aggregated attention over 768 validation stories aligned at `<bos>`, using all positions up to the 128-token context limit.
+- Ran validation head ablations on 96 random validation batches of 32 x 128-token blocks.
+
+Aggregate doc-aligned attention:
+
+| statistic | head 0 | head 1 |
+|---|---:|---:|
+| average self-attention mass | 0.171 | 0.012 |
+| average `<bos>` mass | 0.012 | 0.071 |
+| average attended distance | 2.11 tokens | 10.86 tokens |
+| average nonzero sources | 4.95 | 4.95 |
+| entropy over active sources | 1.391 | 1.551 |
+
+Distance pattern:
+- Head 0 is strongly local: previous token 0.357, token two back 0.236, tokens three to five back 0.203, self 0.171.
+- Head 1 is longer range: tokens six to ten back 0.329, tokens three to five back 0.243, tokens eleven to twenty back 0.155, `<bos>` 0.071.
+
+Qualitative interpretation:
+- Head 0 behaves like a local phrase/boundary head. It usually attends to the immediately preceding phrase: verb-object pairs, modifiers, punctuation, and the current token when that token's identity is directly useful.
+- Head 1 behaves like a story-anchor/context head. It reaches back to subjects, predicates, emotionally salient words, and the story-start `<bos>` token, especially early in a story.
+
+Examples:
+- `the little dog wanted a red ball` predicts `.` with probability 0.554. Head 0 attends to `wanted`, `a`, `ball`, `red`; head 1 attends to `<bos>`, `wanted`, `little`, `dog`, `the`.
+- `lily was sad because she lost her toy` predicts `.` with probability 0.577. Head 0 attends to `lost`, `her`, `she`, `because`, `toy`; head 1 attends to `<bos>`, `sad`, `because`, `was`, `lily`.
+- `the box was very heavy so ben asked lily to help` predicts `him` with probability 0.574. Head 0 attends to `to`, `lily`, `help`, `asked`, `ben`; head 1 attends to `<bos>`, `ben`, `asked`, `heavy`, `the`.
+
+Head ablation on random validation blocks:
+
+| mode | validation loss | perplexity |
+|---|---:|---:|
+| full model | 2.4777 | 11.91 |
+| drop head 0 | 3.9028 | 49.54 |
+| drop head 1 | 3.0155 | 20.40 |
+| drop all attention | 4.9107 | 135.74 |
+
+Conclusion:
+- The two heads are not redundant. Head 0 is more important for immediate next-token accuracy, consistent with it carrying local syntax and phrase completion. Head 1 is still clearly useful, consistent with it carrying earlier context and document/story-anchor information.
+- Attention is a useful first-order interpretation here because the model uses top-k sparse attention and only one decoder block. It is not a complete mechanistic explanation: the residual stream, output projection, and MLP transform the attended value vectors before the logits are produced.
