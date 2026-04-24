@@ -45,6 +45,87 @@ const el = {
   temp: document.querySelector("#temp"),
   tempValue: document.querySelector("#temp-value"),
   predCount: document.querySelector("#pred-count"),
+  tutorialBtn: document.querySelector("#tutorial-btn"),
+  explainer: document.querySelector(".explainer"),
+  tourBackdrop: document.querySelector("#tour-backdrop"),
+  tourCard: document.querySelector("#tour-card"),
+  tourStep: document.querySelector("#tour-step"),
+  tourTitle: document.querySelector("#tour-title"),
+  tourBody: document.querySelector("#tour-body"),
+  tourPrev: document.querySelector("#tour-prev"),
+  tourNext: document.querySelector("#tour-next"),
+  tourClose: document.querySelector("#tour-close"),
+};
+
+const tour = {
+  active: false,
+  index: 0,
+  target: null,
+  steps: [
+    {
+      selector: ".explainer",
+      title: "Start with the mental model",
+      body:
+        "This collapsed section explains the model in plain language: tokens become vectors, attention chooses previous tokens, the MLP transforms the result, and the output is a next-token probability list.",
+      before() {
+        el.explainer.open = true;
+      },
+    },
+    {
+      selector: "#prompt-input",
+      title: "Choose or write a context",
+      body:
+        "The model only understands its 4096-token vocabulary. Write ordinary lowercase-ish English here, or pick a preset above. Tokenize text converts this box into model tokens.",
+    },
+    {
+      selector: "#token-canvas",
+      title: "Read the token strip",
+      body:
+        "Every rounded tile is one model token. The text wraps naturally instead of scrolling sideways. Click any token to ask: what would the model predict immediately after this token?",
+    },
+    {
+      selector: ".legend",
+      title: "Compare the two heads",
+      body:
+        "Each token tile has two tiny heat bars. Orange is attention head 0; teal is attention head 1. A longer bar means that head used that token more strongly.",
+    },
+    {
+      selector: "#selected-token",
+      title: "Edit individual tokens",
+      body:
+        "The selected token appears here. Type a replacement and choose from suggestions ranked by edit distance and token frequency. This keeps edits inside the model vocabulary.",
+    },
+    {
+      selector: "#suggestions",
+      title: "Use vocabulary suggestions",
+      body:
+        "Suggestions update immediately, even for one-letter words like i. Click a suggestion or press Enter to replace the selected token.",
+    },
+    {
+      selector: "#focus-btn",
+      title: "Set the prediction point",
+      body:
+        "Predict here makes the selected token the current focus. The heat bars and next-token list then explain the model's prediction after that token.",
+    },
+    {
+      selector: "#predictions",
+      title: "Inspect next-token probabilities",
+      body:
+        "This list shows the model's most likely next tokens and their probabilities. Click any row to append that token after the current focus.",
+    },
+    {
+      selector: ".generation-controls",
+      title: "Generate text interactively",
+      body:
+        "Use top 1 for the most likely token, or Sample for a random token weighted by probability. Temperature controls how adventurous sampling is.",
+    },
+    {
+      selector: "#decoded",
+      title: "Read the natural text",
+      body:
+        "This is the same token sequence decoded back into plain text. The model is tiny, so it will drift and repeat, but the mechanics are visible.",
+    },
+  ],
 };
 
 async function main() {
@@ -106,6 +187,20 @@ function setupControls() {
   el.predCount.addEventListener("input", () => {
     state.predCount = Number(el.predCount.value);
     runModel();
+  });
+  el.tutorialBtn.addEventListener("click", startTour);
+  el.tourPrev.addEventListener("click", () => showTourStep(tour.index - 1));
+  el.tourNext.addEventListener("click", () => showTourStep(tour.index + 1));
+  el.tourClose.addEventListener("click", endTour);
+  el.tourBackdrop.addEventListener("click", endTour);
+  window.addEventListener("keydown", (event) => {
+    if (!tour.active) return;
+    if (event.key === "Escape") endTour();
+    if (event.key === "ArrowRight") showTourStep(tour.index + 1);
+    if (event.key === "ArrowLeft") showTourStep(tour.index - 1);
+  });
+  window.addEventListener("resize", () => {
+    if (tour.active) positionTourCard();
   });
 }
 
@@ -298,6 +393,82 @@ function escapeHtml(value) {
 
 function setStatus(message) {
   el.status.textContent = message;
+}
+
+function startTour() {
+  tour.active = true;
+  el.tourBackdrop.hidden = false;
+  el.tourCard.hidden = false;
+  document.body.classList.add("tour-active");
+  showTourStep(0);
+}
+
+function showTourStep(index) {
+  if (!tour.active) return;
+  if (index < 0) index = 0;
+  if (index >= tour.steps.length) {
+    endTour();
+    return;
+  }
+  clearTourTarget();
+  tour.index = index;
+  const step = tour.steps[index];
+  if (step.before) step.before();
+  const target = document.querySelector(step.selector);
+  tour.target = target;
+  if (target) {
+    target.classList.add("tour-highlight");
+    target.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+  }
+  el.tourStep.textContent = `Step ${index + 1} of ${tour.steps.length}`;
+  el.tourTitle.textContent = step.title;
+  el.tourBody.textContent = step.body;
+  el.tourPrev.disabled = index === 0;
+  el.tourNext.textContent = index === tour.steps.length - 1 ? "Finish" : "Next";
+  setTimeout(positionTourCard, 180);
+}
+
+function positionTourCard() {
+  if (!tour.active) return;
+  const card = el.tourCard;
+  const target = tour.target;
+  const margin = 18;
+  const cardRect = card.getBoundingClientRect();
+  let top = window.innerHeight / 2 - cardRect.height / 2;
+  let left = window.innerWidth / 2 - cardRect.width / 2;
+
+  if (target) {
+    const rect = target.getBoundingClientRect();
+    const preferRight = rect.left + rect.width / 2 < window.innerWidth / 2;
+    left = preferRight ? rect.right + margin : rect.left - cardRect.width - margin;
+    if (left < margin || left + cardRect.width > window.innerWidth - margin) {
+      left = Math.min(
+        window.innerWidth - cardRect.width - margin,
+        Math.max(margin, rect.left + rect.width / 2 - cardRect.width / 2),
+      );
+      top = rect.bottom + margin;
+      if (top + cardRect.height > window.innerHeight - margin) top = rect.top - cardRect.height - margin;
+    } else {
+      top = rect.top + rect.height / 2 - cardRect.height / 2;
+    }
+  }
+
+  card.style.left = `${Math.max(margin, Math.min(left, window.innerWidth - cardRect.width - margin))}px`;
+  card.style.top = `${Math.max(margin, Math.min(top, window.innerHeight - cardRect.height - margin))}px`;
+}
+
+function endTour() {
+  clearTourTarget();
+  tour.active = false;
+  tour.index = 0;
+  el.tourBackdrop.hidden = true;
+  el.tourCard.hidden = true;
+  document.body.classList.remove("tour-active");
+}
+
+function clearTourTarget() {
+  if (tour.target) tour.target.classList.remove("tour-highlight");
+  tour.target = null;
 }
 
 main().catch((error) => {

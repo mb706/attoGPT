@@ -18,11 +18,77 @@
         Edit the context, choose any token as the prediction point, and inspect exactly which
         previous tokens each attention head uses for the next-token prediction.
       </p>
-      <p id="status" class="status">initializing...</p>
+      <div class="hero-actions">
+        <p id="status" class="status">initializing...</p>
+        <button id="tutorial-btn" class="tour-button">Start tutorial</button>
+      </div>
     </header>
 
     <main class="layout">
       <section class="panel main-panel" aria-label="Token and attention explorer">
+        <details class="explainer">
+          <summary>
+            <span>What am I looking at?</span>
+            <small>architecture, training, and how to read the display</small>
+          </summary>
+          <div class="explainer-grid">
+            <section>
+              <h2>The Model</h2>
+              <p>
+                This page runs a complete GPT-style language model directly in your browser. It is
+                deliberately tiny: one decoder block, 983,520 parameters, a 4096-token word
+                vocabulary, two attention heads, and a context window of 128 tokens.
+              </p>
+              <p>
+                The model reads a sequence of tokens and predicts the next token. A token is usually
+                a lowercase word, comma, period, question mark, or exclamation mark. Unknown words
+                are not free-form; they must be replaced with nearby vocabulary entries.
+              </p>
+            </section>
+            <section>
+              <h2>The Forward Pass</h2>
+              <p>
+                Each token is turned into a 160-number vector, then a learned position vector is
+                added so the model knows where the token sits in the sentence. The single decoder
+                block has two parts: causal self-attention and an MLP.
+              </p>
+              <p>
+                Attention decides which earlier tokens to copy information from. The MLP then
+                transforms the result into features useful for predicting the next token. Finally,
+                the model compares the last vector with every vocabulary entry and produces a
+                probability distribution.
+              </p>
+            </section>
+            <section>
+              <h2>Why The Bars Matter</h2>
+              <p>
+                Normal attention spreads small weights over many previous tokens, which is hard to
+                explain visually. This model uses top-k sparse attention: for every prediction, each
+                head keeps only its five strongest causal attention links and sets all other links
+                to zero.
+              </p>
+              <p>
+                The colored bars under a token show how much the selected prediction position is
+                attending to that token. Orange is head 0; teal is head 1. If a bar is absent, that
+                head did not use that token at all for the current prediction.
+              </p>
+            </section>
+            <section>
+              <h2>Training</h2>
+              <p>
+                The model was trained from scratch on TinyStories: simple English short stories
+                generated for training and evaluating very small language models. Text was
+                lowercased and simplified to words plus basic punctuation.
+              </p>
+              <p>
+                The final run used 200,000 training stories, a full validation split, 12,000 CPU
+                optimization steps, Muon for hidden weight matrices, and AdamW for embeddings and
+                normalization weights. Full validation is 0.8338 bits per byte.
+              </p>
+            </section>
+          </div>
+        </details>
+
         <div class="controls">
           <select id="preset" aria-label="Preset prompt"></select>
           <button id="tokenize-btn" class="primary">Tokenize text</button>
@@ -93,6 +159,18 @@
         </section>
       </aside>
     </main>
+
+    <div id="tour-backdrop" class="tour-backdrop" hidden></div>
+    <aside id="tour-card" class="tour-card" hidden aria-live="polite">
+      <p id="tour-step" class="tour-step">Step 1</p>
+      <h2 id="tour-title">Tutorial</h2>
+      <p id="tour-body"></p>
+      <div class="tour-actions">
+        <button id="tour-prev" class="secondary">Back</button>
+        <button id="tour-next" class="primary">Next</button>
+        <button id="tour-close" class="secondary">Finish</button>
+      </div>
+    </aside>
 
     <script type="module" src="app.js"></script>
   </body>
