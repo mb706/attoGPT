@@ -1,4 +1,4 @@
-import { TinyGptWeb, WordTokenizer, sampleFromTop, topPredictions } from "./model.js";
+import { TinyGptWeb, WordTokenizer, sampleFromTop, topPredictions } from "./model.js?v=20260424-2";
 
 const SPECIAL_TOKENS = new Set(["<pad>", "<bos>", "<eos>", "<unk>"]);
 
