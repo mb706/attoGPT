@@ -8,6 +8,10 @@ attoGPT is a from-scratch, CPU-trained, extremely small GPT-style next-token mod
 
 The final checked-in result is a word-level TinyStories model with sparse causal attention. At each position, each head keeps only the top 5 causal attention weights and zeros the rest before mixing values. This makes it possible to say exactly which previous tokens were incorporated by each head for a next-token prediction.
 
+## Architecture
+
+![Diagram showing the architecture of our one-layer GPT model](image.png)
+
 ## Final Artifact
 
 The final checkpoint bundle is tracked in `artifacts/final/`:
