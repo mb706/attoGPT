@@ -129,6 +129,7 @@ const tour = {
 };
 
 async function main() {
+  setupTourControls();
   setStatus("loading model bundle...");
   const [manifest, tokenizerMeta, weights] = await Promise.all([
     fetchJson("model/manifest.json"),
@@ -140,7 +141,7 @@ async function main() {
   ]);
   state.tokenizer = new WordTokenizer(tokenizerMeta);
   state.model = new TinyGptWeb(manifest, weights);
-  setupControls();
+  setupModelControls();
   loadPrompt(PRESETS[0]);
   setStatus(`ready - ${manifest.checkpoint.params.toLocaleString()} parameters, top-k attention ${manifest.config.topk_attn}`);
 }
@@ -151,7 +152,7 @@ async function fetchJson(path) {
   return response.json();
 }
 
-function setupControls() {
+function setupModelControls() {
   for (const preset of PRESETS) {
     const option = document.createElement("option");
     option.value = preset;
@@ -188,6 +189,9 @@ function setupControls() {
     state.predCount = Number(el.predCount.value);
     runModel();
   });
+}
+
+function setupTourControls() {
   el.tutorialBtn.addEventListener("click", startTour);
   el.tourPrev.addEventListener("click", () => showTourStep(tour.index - 1));
   el.tourNext.addEventListener("click", () => showTourStep(tour.index + 1));
@@ -400,6 +404,7 @@ function startTour() {
   el.tourBackdrop.hidden = false;
   el.tourCard.hidden = false;
   document.body.classList.add("tour-active");
+  if (!state.model) setStatus("tutorial ready - model is still loading in the background...");
   showTourStep(0);
 }
 
