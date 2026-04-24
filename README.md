@@ -65,6 +65,26 @@ python -m tinygpt_demo.inspect_attention \
 
 Expected attention behavior for the final prompt above: after `ball`, each of the 2 heads reports exactly 5 nonzero source tokens because the model was trained with `topk_attn=5`.
 
+## Browser Explorer
+
+The `docs/` directory is a static GitHub Pages site for exploring the model in the browser. It includes a web-exported copy of the final checkpoint:
+
+- `docs/index.html`: the interactive model explorer.
+- `docs/model.js`: vanilla JavaScript inference for this one-block GPT.
+- `docs/model/model.bin`: flat Float32 model weights, about 3.9 MB.
+- `docs/model/manifest.json`: tensor offsets, shapes, config, and checksum.
+- `docs/model/tokenizer.json`: the final word tokenizer.
+
+To preview locally:
+
+```bash
+python3 -m http.server 8765 --directory docs
+```
+
+Then open `http://127.0.0.1:8765/`.
+
+To host on GitHub Pages, configure Pages to serve from the `docs/` folder on the `master` branch.
+
 ## Reproducing The Final Run
 
 The exact end-to-end command sequence is in `scripts/reproduce_final.sh`.
@@ -82,6 +102,7 @@ This will:
 2. Build the 4096-word tokenizer and memmapped train/validation token files under `data/`.
 3. Train the final one-block sparse-attention GPT under `runs/final_word4096_topk5/`.
 4. Run a full sequential validation pass and write `eval_val_full.json`.
+5. Export the trained checkpoint to `docs/model/` for the browser explorer.
 
 On the original environment, the final training run used 16 CPU threads on an AMD Ryzen 7 PRO 8840HS and took about 1.70 hours. The processed data and run outputs are intentionally ignored by git because they can be regenerated.
 
@@ -149,7 +170,9 @@ python -m tinygpt_demo.eval_checkpoint \
 - `tinygpt_demo/sample.py`: text generation.
 - `tinygpt_demo/inspect_attention.py`: per-head attention source inspection.
 - `tinygpt_demo/eval_checkpoint.py`: sequential checkpoint evaluation.
+- `scripts/export_web_model.py`: exports a PyTorch checkpoint into the static browser format.
 - `artifacts/final/`: checked-in final checkpoint bundle.
+- `docs/`: GitHub Pages model explorer and browser-loadable model bundle.
 - `RESEARCH.md`: detailed research log and experimental results.
 
 ## Ignored Files

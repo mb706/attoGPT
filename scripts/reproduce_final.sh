@@ -41,3 +41,11 @@ python -m tinygpt_demo.eval_checkpoint \
   --batch-size 64 \
   --threads 16 \
   --out runs/final_word4096_topk5/eval_val_full.json
+
+python scripts/export_web_model.py \
+  --checkpoint runs/final_word4096_topk5/best.pt \
+  --tokenizer data/ts_word_4096_200k/tokenizer.json \
+  --config runs/final_word4096_topk5/config.json \
+  --summary runs/final_word4096_topk5/summary.json \
+  --eval runs/final_word4096_topk5/eval_val_full.json \
+  --out-dir docs/model

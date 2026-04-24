@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tiny Single-Layer GPT Explorer</title>
+    <meta
+      name="description"
+      content="Explore a one-block GPT trained on TinyStories with top-k sparse attention."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <p class="eyebrow">one decoder block · word tokens · sparse attention</p>
+      <h1>Tiny GPT Explorer</h1>
+      <p class="subtitle">
+        Edit the context, choose any token as the prediction point, and inspect exactly which
+        previous tokens each attention head uses for the next-token prediction.
+      </p>
+      <p id="status" class="status">initializing...</p>
+    </header>
+
+    <main class="layout">
+      <section class="panel main-panel" aria-label="Token and attention explorer">
+        <div class="controls">
+          <select id="preset" aria-label="Preset prompt"></select>
+          <button id="tokenize-btn" class="primary">Tokenize text</button>
+          <button id="reset-btn" class="secondary">Reset</button>
+        </div>
+
+        <label class="prompt-box">
+          <span>Prompt text</span>
+          <textarea id="prompt-input" spellcheck="false"></textarea>
+        </label>
+
+        <div class="meta-row">
+          <span id="context-meta">0/128 tokens</span>
+          <span class="legend">
+            <span class="swatch head0">head 0</span>
+            <span class="swatch head1">head 1</span>
+          </span>
+        </div>
+
+        <div id="token-canvas" class="token-canvas" aria-label="Tokens with attention heatmaps"></div>
+        <p id="decoded" class="decoded"></p>
+      </section>
+
+      <aside class="side-panel" aria-label="Controls">
+        <section class="panel card">
+          <h2>Edit Token</h2>
+          <p id="selected-token" class="selected-token">token</p>
+          <input id="edit-input" type="text" autocomplete="off" spellcheck="false" />
+          <div id="suggestions" class="suggestions"></div>
+          <div class="button-grid">
+            <button id="insert-before-btn" class="secondary">Insert before</button>
+            <button id="insert-after-btn" class="secondary">Insert after</button>
+            <button id="delete-btn" class="danger">Delete</button>
+            <button id="focus-btn" class="primary">Predict here</button>
+          </div>
+        </section>
+
+        <section class="panel card">
+          <h2>Next Token</h2>
+          <div class="generation-controls">
+            <button id="top1-btn" class="primary">Use top 1</button>
+            <button id="sample-btn" class="secondary">Sample</button>
+            <label class="slider-row">
+              <span>temperature <strong id="temp-value">0.80</strong></span>
+              <input id="temp" type="range" min="0.2" max="1.4" step="0.05" value="0.8" />
+            </label>
+            <label class="number-row">
+              <span>shown predictions</span>
+              <input id="pred-count" type="number" min="5" max="30" step="1" value="14" />
+            </label>
+          </div>
+          <div id="predictions" class="predictions"></div>
+        </section>
+
+        <section class="panel card notes">
+          <h2>How To Read It</h2>
+          <p>
+            Click a token to make the model predict the token that should follow it. The two
+            colored bars under every token are the attention weights from head 0 and head 1 for
+            that prediction. Because this model uses top-k sparse attention, each head lights up
+            at most five source tokens.
+          </p>
+          <p>
+            Click a predicted token, use top 1, or sample to insert the next token and continue
+            generation. To change an existing token, type in the editor and choose a vocabulary
+            suggestion ranked by edit distance and token frequency.
+          </p>
+        </section>
+      </aside>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

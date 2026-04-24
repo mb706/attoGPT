@@ -1,0 +1,99 @@
+{
+  "format": "tiny-gpt-web-f32-v1",
+  "source_checkpoint": "artifacts/final/best.pt",
+  "config": {
+    "vocab_size": 4096,
+    "block_size": 128,
+    "n_embd": 160,
+    "n_head": 2,
+    "mlp_mult": 4.0,
+    "dropout": 0.0,
+    "norm": "rmsnorm",
+    "activation": "gelu",
+    "pos": "learned",
+    "topk_attn": 5,
+    "qk_norm": false,
+    "tie_weights": true
+  },
+  "checkpoint": {
+    "step": 11500,
+    "val_loss": 2.4662821292877197,
+    "val_bpb": 0.8294831562133451,
+    "params": 983520
+  },
+  "dtype": "float32-le",
+  "tensors": {
+    "tok_emb.weight": {
+      "shape": [
+        4096,
+        160
+      ],
+      "offset": 0,
+      "length": 655360
+    },
+    "pos_emb.weight": {
+      "shape": [
+        128,
+        160
+      ],
+      "offset": 655360,
+      "length": 20480
+    },
+    "block.ln1.weight": {
+      "shape": [
+        160
+      ],
+      "offset": 675840,
+      "length": 160
+    },
+    "block.attn.qkv.weight": {
+      "shape": [
+        480,
+        160
+      ],
+      "offset": 676000,
+      "length": 76800
+    },
+    "block.attn.proj.weight": {
+      "shape": [
+        160,
+        160
+      ],
+      "offset": 752800,
+      "length": 25600
+    },
+    "block.ln2.weight": {
+      "shape": [
+        160
+      ],
+      "offset": 778400,
+      "length": 160
+    },
+    "block.mlp.fc.weight": {
+      "shape": [
+        640,
+        160
+      ],
+      "offset": 778560,
+      "length": 102400
+    },
+    "block.mlp.proj.weight": {
+      "shape": [
+        160,
+        640
+      ],
+      "offset": 880960,
+      "length": 102400
+    },
+    "ln_f.weight": {
+      "shape": [
+        160
+      ],
+      "offset": 983360,
+      "length": 160
+    }
+  },
+  "num_floats": 983520,
+  "num_bytes": 3934080,
+  "sha256": "58635aa192f167388ebf93961917dd894516193a5fb19dc812476870dee6fd0b"
+}
