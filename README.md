@@ -2,9 +2,9 @@
 
 (*100% vibe coded.*)
 
-attoGPT is a from-scratch, CPU-trained, extremely small GPT-style next-token model for demonstration and interpretability. The model is intentionally constrained to one decoder block so the attention and MLP components are easy to inspect.
+**[Explore the Model](https://mb706.github.io/attoGPT/) (webpage)**
 
-Repository: https://github.com/mb706/attoGPT/
+attoGPT is a from-scratch, CPU-trained, extremely small GPT-style next-token model for demonstration and interpretability. The model is intentionally constrained to one decoder block so the attention and MLP components are easy to inspect.
 
 The final checked-in result is a word-level TinyStories model with sparse causal attention. At each position, each head keeps only the top 5 causal attention weights and zeros the rest before mixing values. This makes it possible to say exactly which previous tokens were incorporated by each head for a next-token prediction.
 
