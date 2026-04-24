@@ -1,0 +1,77 @@
+{
+  "model": {
+    "vocab_size": 4096,
+    "block_size": 128,
+    "n_embd": 160,
+    "n_head": 2,
+    "mlp_mult": 4.0,
+    "dropout": 0.0,
+    "norm": "rmsnorm",
+    "activation": "gelu",
+    "pos": "learned",
+    "topk_attn": 5,
+    "qk_norm": false,
+    "tie_weights": true
+  },
+  "params": 983520,
+  "data_dir": "data/ts_word_4096_200k",
+  "meta": {
+    "source": "roneneldan/TinyStories",
+    "train_files": [
+      "raw_data/hf/data/train-00000-of-00004-2d5a1467fff1081b.parquet"
+    ],
+    "val_file": "raw_data/hf/data/validation-00000-of-00001-869c898b519ad725.parquet",
+    "train_shards": 1,
+    "max_train_docs": 200000,
+    "max_val_docs": 21990,
+    "tokenizer": "word",
+    "vocab_size": 4096,
+    "requested_vocab_size": 4096,
+    "text_mode": "simple",
+    "dtype": "uint16",
+    "train": {
+      "docs": 200000,
+      "tokens": 41684537,
+      "bytes": 178128692,
+      "unk_tokens": 331630,
+      "unk_rate": 0.007955707892353465
+    },
+    "val": {
+      "docs": 21990,
+      "tokens": 4421892,
+      "bytes": 18967839,
+      "unk_tokens": 35937,
+      "unk_rate": 0.008127064161675591
+    }
+  },
+  "train_args": {
+    "data_dir": "data/ts_word_4096_200k",
+    "out_dir": "runs/final_word4096_topk5",
+    "device": "cpu",
+    "threads": 16,
+    "seed": 1337,
+    "block_size": 128,
+    "batch_size": 64,
+    "eval_batch_size": 64,
+    "max_steps": 12000,
+    "eval_interval": 500,
+    "eval_iters": 24,
+    "n_embd": 160,
+    "n_head": 2,
+    "mlp_mult": 4.0,
+    "dropout": 0.0,
+    "norm": "rmsnorm",
+    "activation": "gelu",
+    "pos": "learned",
+    "topk_attn": 5,
+    "qk_norm": false,
+    "untie_weights": false,
+    "optimizer": "muon",
+    "lr": 0.0042,
+    "min_lr": 8e-05,
+    "muon_lr": 0.028,
+    "warmup_steps": 120,
+    "weight_decay": 0.05,
+    "grad_clip": 1.0
+  }
+}

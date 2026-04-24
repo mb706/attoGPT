@@ -1,0 +1,8 @@
+{
+  "best_val_loss": 2.4662821292877197,
+  "best_val_bpb": 0.8294831562133451,
+  "best_step": 11500,
+  "params": 983520,
+  "out_dir": "runs/final_word4096_topk5",
+  "elapsed_sec": 6131.692802190781
+}

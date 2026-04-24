@@ -1,0 +1,18 @@
+[project]
+name = "tiny-single-layer-gpt"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "torch",
+  "numpy",
+  "tokenizers",
+  "optuna",
+  "pyarrow",
+  "pandas",
+  "matplotlib",
+  "tqdm",
+  "huggingface-hub",
+]
+
+[tool.ruff]
+line-length = 100

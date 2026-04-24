@@ -1,0 +1,9 @@
+{
+  "checkpoint": "runs/final_word4096_topk5/best.pt",
+  "split": "val",
+  "loss": 2.47901090785817,
+  "bpb": 0.8337642185046278,
+  "tokens_evaluated": 4421888,
+  "block_size": 128,
+  "batch_size": 64
+}

@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Downloaded and generated data
+raw_data/
+data/
+runs/
+
+# Local experiment output
+*.log
+*.sqlite
+*.db
+
+# Keep the small final demo artifact in git.
+!artifacts/
+!artifacts/final/
+!artifacts/final/best.pt
+!artifacts/final/tokenizer.json
+!artifacts/final/config.json
+!artifacts/final/summary.json
+!artifacts/final/eval_val_full.json
